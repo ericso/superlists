@@ -13,18 +13,6 @@ class HomePageTest(TestCase):
     found = resolve('/')
     self.assertEqual(found.func, home_page)
 
-  # def test_home_page_returns_correct_html(self):
-  #   request = HttpRequest()
-  #   response = home_page(request)
-
-  #   print(repr(response.content))
-
-  #   # content from the response is in raw bytes
-  #   # we have to compare them with the b'' syntax
-  #   self.assertTrue(response.content.startswith(b'<html>'))
-  #   self.assertIn(b'<title>To-Do lists</title>', response.content)
-  #   self.assertTrue(response.content.strip().endswith(b'</html>'))
-
   def test_home_page_returns_correct_html(self):
     request = HttpRequest()
     response = home_page(request)
@@ -32,4 +20,18 @@ class HomePageTest(TestCase):
 
     # .decode() converts the response.content bytes to a
     #  Python Unicode string
+    self.assertEqual(response.content.decode(), expected_html)
+
+  def test_home_page_can_save_a_POST_reqeuest(self):
+    request = HttpRequest()
+    request.method = 'POST'
+    request.POST['item_text'] = "A new list item"
+
+    response = home_page(request)
+
+    self.assertIn("A new list item", response.content.decode())
+    expected_html = render_to_string(
+      'home.html',
+      {'new_item_text': 'A new list item'}
+    )
     self.assertEqual(response.content.decode(), expected_html)
