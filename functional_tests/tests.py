@@ -8,11 +8,18 @@ from django.test import LiveServerTestCase
 class NewVisitorTest(LiveServerTestCase):
 
   def setUp(self):
+    self.setUpBrowser()
+
+  def tearDown(self):
+    self.tearDownBrowser()
+
+  def setUpBrowser(self):
     self.browser = webdriver.Firefox()
     self.browser.implicitly_wait(3)
 
-  def tearDown(self):
+  def tearDownBrowser(self):
     self.browser.quit()
+
 
   def check_for_row_in_list_table(self, row_text):
     table = self.browser.find_element_by_id('id_list_table')
@@ -63,8 +70,9 @@ class NewVisitorTest(LiveServerTestCase):
 
     ## We use a new browser session to make sure that no information
     ##  of Edith's is coming through from the cookies, etc
-    self.browser.quit()
-    self.browser = webdriver.Firefox()
+    self.tearDownBrowser()
+    self.setUpBrowser()
+    self.browser.get(self.live_server_url)
 
     # Francis visits the home page. There is no sign of Edith's list
     page_text = self.browser.find_element_by_tag_name('body').text
@@ -75,12 +83,12 @@ class NewVisitorTest(LiveServerTestCase):
     # He is less interesting than Edith...
     inputbox = self.browser.find_element_by_id('id_new_item')
     inputbox.send_keys("Buy milk")
-    inputbox.send_keys(keys.ENTER)
+    inputbox.send_keys(Keys.ENTER)
 
     # Francis gets his own unique URL
     francis_list_url = self.browser.current_url
     self.assertRegex(francis_list_url, '/lists/.+')
-    self.assertNoEqual(francis_list_url, edith_list_url)
+    self.assertNotEqual(francis_list_url, edith_list_url)
 
     # Again, there is no trace of Edith's list
     page_text = self.browser.find_element_by_tag_name('body').text
