@@ -1,4 +1,6 @@
 """Functional Tests for superlists project"""
+import sys
+
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
@@ -8,6 +10,24 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 class NewVisitorTest(StaticLiveServerTestCase):
 
   ### Non-testing methods ###
+  @classmethod
+  def setUpClass(cls):
+    """Hack for overriding server URL to use a staging server
+
+    Use self.server_url instead of self.live_server_url
+    """
+    for arg in sys.argv:
+      if 'liveserver' in arg:
+        cls.server_url = 'http://' + arg.split('=')[1]
+        return
+    super().setUpClass()
+    cls.server_url = cls.live_server_url
+
+  @classmethod
+  def tearDownClass(cls):
+    if cls.server_url == cls.live_server_url:
+      super().tearDownClass()
+
   def setUp(self):
     self.setUpBrowser()
 
@@ -30,7 +50,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
   def test_can_start_a_list_and_retrieve_it_later(self):
     # Edith has heard about a cool new online to-do app.
     # She goes to check out its homepage
-    self.browser.get(self.live_server_url)
+    self.browser.get(self.server_url)
 
     # She notices the page title and header mention to-do lists
     self.assertIn('To-Do', self.browser.title)
@@ -72,7 +92,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
     ##  of Edith's is coming through from the cookies, etc
     self.tearDownBrowser()
     self.setUpBrowser()
-    self.browser.get(self.live_server_url)
+    self.browser.get(self.server_url)
 
     # Francis visits the home page. There is no sign of Edith's list
     page_text = self.browser.find_element_by_tag_name('body').text
@@ -99,7 +119,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
   def test_layout_and_styling(self):
     # Edith goes to the home page
-    self.browser.get(self.live_server_url)
+    self.browser.get(self.server_url)
     self.browser.set_window_size(1024, 768)
 
     # She notices the input box is nicely centered
