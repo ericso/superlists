@@ -1,5 +1,6 @@
 """Unit tests for models in lists app in superlists project"""
 from django.test import TestCase
+from django.core.exceptions import ValidationError
 
 from lists.models import Item, List
 
@@ -32,3 +33,12 @@ class ListAndItemModelsTest(TestCase):
     self.assertEqual(first_saved_item.list, list_)
     self.assertEqual(second_saved_item.text, "Item the second")
     self.assertEqual(second_saved_item.list, list_)
+
+  def test_cannot_save_empty_list_item(self):
+    list_ = List.objects.create()
+    item = Item(list=list_, text='')
+    with self.assertRaises(ValidationError):
+      item.save()
+      # Hack to validate Django's TextField, as full validation does not run
+      #  on model save
+      item.full_clean()
