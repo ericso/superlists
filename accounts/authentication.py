@@ -26,7 +26,7 @@ class PersonaAuthenticationBackend(object):
         try:
           return self.get_user(email)
         except ListUser.DoesNotExist:
-          return ListUser.object.create(email=email)
+          return ListUser.objects.create(email=email)
 
   def get_user(self, email):
     return ListUser.objects.get(email=email)
