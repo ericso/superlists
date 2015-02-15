@@ -1,14 +1,13 @@
 import logging
 import requests
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 
 
 User = get_user_model()
 
 PERSONA_VERIFY_URL = 'https://verifier.login.persona.org/verify'
-# DOMAIN = 'localhost'
-DOMAIN = 'superlists-staging.ericso.me'
 
 
 class PersonaAuthenticationBackend(object):
@@ -18,7 +17,7 @@ class PersonaAuthenticationBackend(object):
 
     data = {
       'assertion': assertion,
-      'audience': DOMAIN
+      'audience': settings.DOMAIN
     }
     response = requests.post(PERSONA_VERIFY_URL, data=data)
 
