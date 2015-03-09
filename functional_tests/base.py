@@ -1,5 +1,6 @@
 """Base Functional Test Class for superlists project"""
 import sys
+import requests
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -27,18 +28,14 @@ class FunctionalTest(StaticLiveServerTestCase):
     if cls.server_url == cls.live_server_url:
       super().tearDownClass()
 
+
   def setUp(self):
-    self.setUpBrowser()
-
-  def tearDown(self):
-    self.tearDownBrowser()
-
-  def setUpBrowser(self):
     self.browser = webdriver.Firefox()
     self.browser.implicitly_wait(3)
 
-  def tearDownBrowser(self):
+  def tearDown(self):
     self.browser.quit()
+
 
   def check_for_row_in_list_table(self, row_text):
     table = self.browser.find_element_by_id('id_list_table')
@@ -76,3 +73,9 @@ class FunctionalTest(StaticLiveServerTestCase):
     self.wait_for_element_with_id('id_login')
     navbar = self.browser.find_element_by_css_selector('.navbar')
     self.assertNotIn(email, navbar.text)
+
+
+  def get_new_persona_test_user(self):
+    resp = requests.get('http://personatestuser.org/email')
+    data = resp.json()
+    return (data['email'], data['pass'])
