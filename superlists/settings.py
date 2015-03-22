@@ -28,7 +28,7 @@ TEMPLATE_DEBUG = True
 # The DOMAIN setting is changed by the deploy JavaScript
 DOMAIN = 'localhost'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [DOMAIN]
 
 LOGGING = {
   'version': 1,
