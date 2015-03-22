@@ -48,8 +48,8 @@ class NewVisitorTest(FunctionalTest):
 
     ## We use a new browser session to make sure that no information
     ##  of Edith's is coming through from the cookies, etc
-    self.tearDownBrowser()
-    self.setUpBrowser()
+    self.tearDown()
+    self.setUp()
     self.browser.get(self.server_url)
 
     # Francis visits the home page. There is no sign of Edith's list
