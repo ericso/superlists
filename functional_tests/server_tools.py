@@ -14,8 +14,9 @@ def create_session_on_server(host, email):
     [
       'fab',
       'create_session_on_server:email={}'.format(email),
-      '--host={}@{}'.format(AWS_USER, host),
-      '--i={}'.format(AWS_KEY_PATH),
+      # '--host={}@{}'.format(AWS_USER, host),
+      '--host={}'.format(host),
+      # '--i={}'.format(AWS_KEY_PATH),
       '--hide=everything,status',
     ],
     cwd=THIS_FOLDER
@@ -26,7 +27,8 @@ def reset_database(host):
     [
       'fab',
       'reset_database',
-      '--host={}@{}'.format(AWS_USER, host)
+      # '--host={}@{}'.format(AWS_USER, host)
+      '--host={}'.format(host)
     ],
     cwd=THIS_FOLDER
   )
