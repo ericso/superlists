@@ -4,6 +4,7 @@ from django.core.urlresolvers import resolve
 from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.utils.html import escape
+from django.contrib.auth import get_user_model
 
 from lists.views import home_page
 from lists.models import Item, List
@@ -13,6 +14,9 @@ from lists.forms import (
   EMPTY_ITEM_ERROR,
   DUPLICATE_ITEM_ERROR,
 )
+
+
+User = get_user_model()
 
 
 class HomePageTest(TestCase):
@@ -160,3 +164,17 @@ class NewListTest(TestCase):
     self.client.post('/lists/new', data={'text': ''})
     self.assertEqual(List.objects.count(), 0)
     self.assertEqual(Item.objects.count(), 0)
+
+
+class MyListsTest(TestCase):
+
+  def test_my_lists_url_renders_my_lists_template(self):
+    User.objects.create(email='a@b.com')
+    response = self.client.get('/lists/users/a@b.com/')
+    self.assertTemplateUsed(response, 'my_lists.html')
+
+  def test_passes_correct_owner_to_template(self):
+    User.objects.create(email='wrong@owner.com')
+    correct_user = User.objects.create(email='a@b.com')
+    response = self.client.get('/lists/users/a@b.com/')
+    self.assertEqual(response.context['owner'], correct_user)

@@ -12,6 +12,9 @@
     <nav class="navbar navbar-default" role="navigation">
       <a class="navbar-brand" href="/">Superlists</a>
       {% if user.email %}
+      <ul class="nav navbar-nav">
+        <li><a href="{% url 'my_lists' user.email %}">My lists</a></li>
+      </ul>
       <a class="btn navbar-btn navbar-right" id="id_logout" href="{% url 'logout' %}">Logout</a>
       <span class="navbar-text navbar-right">Logged in as {{ user.email }}
       {% else %}
@@ -21,8 +24,12 @@
 
     <div class="row">
       <div class="col-md-6 col-md-offset-3 jumbotron">
+
         <div class="text-center">
           <h1>{% block header_text %}{% endblock header_text %}</h1>
+
+          <!-- List item add form -->
+          {% block list_form %}
           <form method="POST" action="{% block form_action %}{% endblock form_action %}">
             {{ form.text }}
             {% csrf_token %}
@@ -32,6 +39,8 @@
               </div>
             {% endif %}
           </form>
+          {% endblock list_form %}
+
         </div>
       </div>
     </div>
@@ -41,6 +50,13 @@
         {% block table %}{% endblock table %}
       </div>
     </div>
+
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        {% block extra_content %}{% endblock extra_content %}
+      </div>
+    </div>
+
   </div>
 
   <script src="http://code.jquery.com/jquery.min.js"></script>
