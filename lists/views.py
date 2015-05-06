@@ -32,7 +32,13 @@ def view_list(request, list_id):
 def new_list(request):
   form = ItemForm(data=request.POST)
   if form.is_valid():
-    list_ = List.objects.create()
+    list_ = List()
+    list_.owner = request.user
+    list_.save()
+
+    # NOTE(eso): this is the old way of creating the list
+    # list_ = List.objects.create()
+
     form.save(for_list=list_)
     return redirect(list_)
   else:
