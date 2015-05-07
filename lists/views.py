@@ -33,7 +33,11 @@ def new_list(request):
   form = ItemForm(data=request.POST)
   if form.is_valid():
     list_ = List()
-    list_.owner = request.user
+
+    # Only save the user if a user is logged in (AnonymousUser is not valid)
+    if request.user.is_authenticated():
+      list_.owner = request.user
+
     list_.save()
 
     # NOTE(eso): this is the old way of creating the list
